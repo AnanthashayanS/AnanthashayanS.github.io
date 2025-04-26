@@ -1,0 +1,331 @@
+:root {
+    --primary: #00f0ff;
+    --secondary: #0080ff;
+    --background: #0a0a12;
+    --text: #ffffff;
+    --dark-panel: rgba(16, 24, 39, 0.85);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto Mono', monospace;
+}
+
+body, html {
+    overflow: hidden;
+    background-color: var(--background);
+    color: var(--text);
+    height: 100%;
+    width: 100%;
+}
+
+.loading-screen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.loading-content {
+    text-align: center;
+    width: 80%;
+    max-width: 500px;
+}
+
+.loading-content h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--primary);
+    text-shadow: 0 0 10px var(--primary);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    width: 0%;
+    box-shadow: 0 0 10px var(--primary);
+    transition: width 0.5s ease-out;
+}
+
+.loading-text {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.experience {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.user-interface {
+    position: fixed;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.navigation {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+    pointer-events: auto;
+}
+
+.nav-button {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: var(--text);
+    border: 1px solid var(--primary);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    outline: none;
+}
+
+.nav-button:hover {
+    background-color: var(--primary);
+    color: var(--background);
+    box-shadow: 0 0 15px var(--primary);
+}
+
+.nav-button.active {
+    background-color: var(--primary);
+    color: var(--background);
+    box-shadow: 0 0 15px var(--primary);
+}
+
+.panel {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--dark-panel);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    width: 350px;
+    max-height: 80vh;
+    overflow-y: auto;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    pointer-events: auto;
+    display: none;
+}
+
+.panel.active {
+    opacity: 1;
+    display: block;
+}
+
+.panel h2 {
+    color: var(--primary);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+    padding-bottom: 8px;
+}
+
+.panel h3 {
+    color: var(--secondary);
+    margin: 15px 0 5px;
+    font-size: 1.2rem;
+}
+
+.panel p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.panel ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.panel li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.project, .job {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.project:last-child, .job:last-child {
+    border-bottom: none;
+}
+
+.contact-link {
+    display: inline-block;
+    color: var(--primary);
+    text-decoration: none;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+    text-shadow: 0 0 10px var(--primary);
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    color: var(--text);
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--background);
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.info-box {
+    background-color: var(--dark-panel);
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 20px var(--primary);
+    border-radius: 10px;
+    padding: 25px;
+    width: 350px;
+    max-width: 90%;
+}
+
+.info-box h3 {
+    color: var(--primary);
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.info-box ul {
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.info-box li {
+    margin-bottom: 10px;
+}
+
+.close-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary);
+    color: var(--background);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background-color: var(--secondary);
+    box-shadow: 0 0 15px var(--secondary);
+}
+
+/* Terminal-like text animation */
+.typed-text::after {
+    content: '|';
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .navigation {
+        top: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-button {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .panel {
+        right: 10px;
+        left: 10px;
+        width: calc(100% - 20px);
+        max-height: 70vh;
+    }
+}
+
+/* Futuristic circuit-board pattern overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+} 

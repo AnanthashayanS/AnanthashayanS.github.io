@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Systems Engineer Portfolio</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <meta name="description" content="Interactive portfolio of an Embedded Systems Engineer specializing in NRF5340 and STM32H7 microcontrollers">
+</head>
+<body>
+    <div class="loading-screen">
+        <div class="loading-content">
+            <h1>LOADING EMBEDDED WORLD</h1>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="loading-text">Initializing hardware components...</div>
+        </div>
+    </div>
+
+    <div class="experience">
+        <!-- 3D canvas will be injected here -->
+    </div>
+
+    <div class="user-interface">
+        <div class="navigation">
+            <button class="nav-button" data-section="about">About</button>
+            <button class="nav-button" data-section="skills">Skills</button>
+            <button class="nav-button" data-section="projects">Projects</button>
+            <button class="nav-button" data-section="experience">Experience</button>
+            <button class="nav-button" data-section="contact">Contact</button>
+        </div>
+
+        <div class="panel" id="about">
+            <h2>About Me</h2>
+            <p>Embedded Systems Engineer specializing in NRF5340 and STM32H7 microcontrollers. Passionate about developing efficient, reliable systems that bridge the digital and physical worlds.</p>
+        </div>
+
+        <div class="panel" id="skills">
+            <h2>Skills</h2>
+            <ul>
+                <li>Embedded C/C++ Development</li>
+                <li>Real-Time Operating Systems (FreeRTOS)</li>
+                <li>NRF5340 Dual-Core Programming</li>
+                <li>STM32H7 Performance Optimization</li>
+                <li>Bluetooth Low Energy (BLE) Implementation</li>
+                <li>Hardware Debugging & Signal Analysis</li>
+                <li>PCB Design & Circuit Analysis</li>
+                <li>IoT Protocols & Communication</li>
+            </ul>
+        </div>
+
+        <div class="panel" id="projects">
+            <h2>Projects</h2>
+            <div class="project">
+                <h3>Wireless Sensor Network</h3>
+                <p>Developed a low-power mesh network using NRF5340 microcontrollers for industrial monitoring.</p>
+            </div>
+            <div class="project">
+                <h3>Advanced Motor Control System</h3>
+                <p>Created a high-performance motor controller using STM32H7 with real-time feedback.</p>
+            </div>
+            <div class="project">
+                <h3>Medical Device Prototype</h3>
+                <p>Designed an FDA-compliant wearable medical device with secure data transmission.</p>
+            </div>
+        </div>
+
+        <div class="panel" id="experience">
+            <h2>Experience</h2>
+            <div class="job">
+                <h3>Senior Embedded Engineer</h3>
+                <p>Developing firmware for next-generation IoT products with stringent power requirements.</p>
+            </div>
+            <div class="job">
+                <h3>Firmware Developer</h3>
+                <p>Led development of communication protocols for industrial automation systems.</p>
+            </div>
+        </div>
+
+        <div class="panel" id="contact">
+            <h2>Contact</h2>
+            <p>Get in touch to discuss your embedded systems needs:</p>
+            <a href="mailto:contact@example.com" class="contact-link">contact@example.com</a>
+            <div class="social-links">
+                <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+                <a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay">
+        <div class="info-box">
+            <h3>Controls</h3>
+            <ul>
+                <li>WASD or Arrow Keys: Move around</li>
+                <li>Mouse: Look around</li>
+                <li>Click: Interact with objects</li>
+                <li>Space: Jump</li>
+            </ul>
+            <button class="close-btn">Got it!</button>
+        </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html> 
