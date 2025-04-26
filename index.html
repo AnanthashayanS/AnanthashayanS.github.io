@@ -6,16 +6,17 @@
     <title>Embedded Systems Engineer Portfolio</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <meta name="description" content="Interactive portfolio of an Embedded Systems Engineer specializing in NRF5340 and STM32H7 microcontrollers">
 </head>
 <body>
     <div class="loading-screen">
         <div class="loading-content">
-            <h1>LOADING EMBEDDED WORLD</h1>
+            <h1>INITIALIZING EMBEDDED WORLD</h1>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
-            <div class="loading-text">Initializing hardware components...</div>
+            <div class="loading-text">Initializing navigation systems...</div>
         </div>
     </div>
 
@@ -35,6 +36,7 @@
         <div class="panel" id="about">
             <h2>About Me</h2>
             <p>Embedded Systems Engineer specializing in NRF5340 and STM32H7 microcontrollers. Passionate about developing efficient, reliable systems that bridge the digital and physical worlds.</p>
+            <p>With over 10 years of experience in the field, I've developed solutions for industrial, consumer, medical, and IoT applications, always striving for optimal power efficiency and performance.</p>
         </div>
 
         <div class="panel" id="skills">
@@ -48,6 +50,8 @@
                 <li>Hardware Debugging & Signal Analysis</li>
                 <li>PCB Design & Circuit Analysis</li>
                 <li>IoT Protocols & Communication</li>
+                <li>Power Management Optimization</li>
+                <li>Embedded Linux Development</li>
             </ul>
         </div>
 
@@ -55,15 +59,19 @@
             <h2>Projects</h2>
             <div class="project">
                 <h3>Wireless Sensor Network</h3>
-                <p>Developed a low-power mesh network using NRF5340 microcontrollers for industrial monitoring.</p>
+                <p>Developed a low-power mesh network using NRF5340 microcontrollers for industrial monitoring. The system achieves battery life of over 5 years while maintaining reliable data transmission under harsh conditions.</p>
             </div>
             <div class="project">
                 <h3>Advanced Motor Control System</h3>
-                <p>Created a high-performance motor controller using STM32H7 with real-time feedback.</p>
+                <p>Created a high-performance motor controller using STM32H7 with real-time feedback. Features precision control of brushless DC motors for robotics applications with sub-millisecond response time.</p>
             </div>
             <div class="project">
                 <h3>Medical Device Prototype</h3>
-                <p>Designed an FDA-compliant wearable medical device with secure data transmission.</p>
+                <p>Designed an FDA-compliant wearable medical device with secure data transmission. Implemented AES-256 encryption and BLE 5.0 protocols to ensure patient data security while maximizing battery life.</p>
+            </div>
+            <div class="project">
+                <h3>IoT Gateway Solution</h3>
+                <p>Developed a multi-protocol gateway that bridges BLE, Zigbee, and Wi-Fi networks for smart home applications. Optimized for reliability and throughput using dual-core architecture.</p>
             </div>
         </div>
 
@@ -71,11 +79,15 @@
             <h2>Experience</h2>
             <div class="job">
                 <h3>Senior Embedded Engineer</h3>
-                <p>Developing firmware for next-generation IoT products with stringent power requirements.</p>
+                <p>Developing firmware for next-generation IoT products with stringent power requirements. Lead architecture design for multi-processor systems, including nRF5340 and STM32H7 platforms.</p>
             </div>
             <div class="job">
                 <h3>Firmware Developer</h3>
-                <p>Led development of communication protocols for industrial automation systems.</p>
+                <p>Led development of communication protocols for industrial automation systems. Implemented reliable mesh networks for factory floor monitoring with 99.99% uptime.</p>
+            </div>
+            <div class="job">
+                <h3>Hardware Engineer</h3>
+                <p>Designed PCBs for embedded systems with a focus on signal integrity and EMI/EMC compliance. Successfully passed FCC and CE certification for multiple products.</p>
             </div>
         </div>
 
@@ -92,16 +104,21 @@
 
     <div class="overlay">
         <div class="info-box">
-            <h3>Controls</h3>
+            <h3>Welcome to My Embedded Systems Portfolio</h3>
             <ul>
-                <li>WASD or Arrow Keys: Move around</li>
-                <li>Mouse: Look around</li>
-                <li>Click: Interact with objects</li>
-                <li>Space: Jump</li>
+                <li>Navigate this 3D space using <kbd>WASD</kbd> or arrow keys</li>
+                <li>Look around using your mouse</li>
+                <li>Press <kbd>Space</kbd> to jump</li>
+                <li>Click on objects to interact with them</li>
+                <li>Find the spaceship to travel between areas quickly</li>
+                <li>Explore STM32 and nRF5 showcases</li>
             </ul>
-            <button class="close-btn">Got it!</button>
+            <button class="close-btn">Start Exploring</button>
         </div>
     </div>
+
+    <div class="spaceship-indicator">SPACESHIP MODE</div>
+    <button class="help-button" title="Show Controls">?</button>
 
     <script type="module" src="src/main.js"></script>
 </body>

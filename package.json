@@ -1,0 +1,19 @@
+{
+  "name": "embedded-engineer-portfolio",
+  "version": "1.0.0",
+  "description": "Interactive 3D portfolio for an embedded systems engineer",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "portfolio",
+    "3D",
+    "embedded",
+    "engineering",
+    "three.js"
+  ],
+  "author": "",
+  "license": "MIT"
+} 

@@ -21,6 +21,11 @@ body, html {
     width: 100%;
 }
 
+/* Lock cursor during controls */
+body.controls-active {
+    cursor: crosshair !important;
+}
+
 .loading-screen {
     position: fixed;
     width: 100%;
