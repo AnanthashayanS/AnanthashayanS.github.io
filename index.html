@@ -3,123 +3,716 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embedded Systems Engineer Portfolio</title>
+    <title>Ananthashayan S - Embedded Systems Developer</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="icon" type="image/png" href="assets/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <meta name="description" content="Interactive portfolio of an Embedded Systems Engineer specializing in NRF5340 and STM32H7 microcontrollers">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Ananthashayan Selvaraj - Embedded Systems Engineer specializing in STM32 and nRF microcontrollers">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MCU Code snippets and data templates -->
+    <script type="application/json" id="mcu-data">
+        {
+            "nrf5340": {
+                "name": "NRF5340",
+                "description": "Advanced dual-core SoC with dedicated application and network processing cores based on ARM Cortex-M33 architecture.",
+                "initialization": "// NRF5340 Dual-core initialization\n#include <zephyr/kernel.h>\n#include <hal/nrf_reset.h>\n#include <zephyr/drivers/gpio.h>\n\n// Application core setup\nvoid app_core_init(void) {\n    // Configure clock for maximum performance\n    NRF_CLOCK->HFCLKCTRL = (CLOCK_HFCLKCTRL_HCLK_DIV_HCLK_DIV1 << CLOCK_HFCLKCTRL_HCLK_DIV_Pos);\n    \n    // Enable cache\n    NRF_CACHE->ENABLE = CACHE_ENABLE_ENABLE_Enabled;\n    \n    // Configure DC/DC converters for power efficiency\n    NRF_REGULATORS->VREGMAIN.DCDCEN = REGULATORS_VREGMAIN_DCDCEN_DCDCEN_Enabled;\n}\n\n// Network core setup\nvoid net_core_init(void) {\n    // Release network core from reset\n    nrf_reset_network_force_off(NRF_RESET, false);\n    \n    // Set up IPC for inter-processor communication\n    NRF_IPC->SEND_CNF[0] = (1 << 0);\n    NRF_IPC->RECEIVE_CNF[0] = (1 << 0);\n}",
+                "peripherals": [
+                    {
+                        "name": "GPIO Configuration",
+                        "code": "// GPIO configuration for NRF5340\n#define LED1_PIN 28\n#define BUTTON1_PIN 23\n\nstatic const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);\nstatic const struct gpio_dt_spec button = GPIO_DT_SPEC_GET(DT_ALIAS(sw0), gpios);\n\nint gpio_init(void) {\n    int ret;\n    \n    if (!gpio_is_ready_dt(&led)) {\n        return -ENODEV;\n    }\n    \n    ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);\n    if (ret < 0) {\n        return ret;\n    }\n    \n    if (!gpio_is_ready_dt(&button)) {\n        return -ENODEV;\n    }\n    \n    ret = gpio_pin_configure_dt(&button, GPIO_INPUT | GPIO_PULL_UP);\n    if (ret < 0) {\n        return ret;\n    }\n    \n    return 0;\n}"
+                    },
+                    {
+                        "name": "BLE Setup",
+                        "code": "// BLE setup for NRF5340\n#include <bluetooth/bluetooth.h>\n#include <bluetooth/hci.h>\n#include <bluetooth/uuid.h>\n\n// Advertising data\nstatic const struct bt_data ad[] = {\n    BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),\n    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL)),\n};\n\nstatic void bt_ready(int err) {\n    if (err) {\n        printk(\"Bluetooth init failed (err %d)\\n\", err);\n        return;\n    }\n    \n    printk(\"Bluetooth initialized\\n\");\n    \n    // Start advertising\n    err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);\n    if (err) {\n        printk(\"Advertising failed to start (err %d)\\n\", err);\n        return;\n    }\n    \n    printk(\"Advertising successfully started\\n\");\n}"
+                    },
+                    {
+                        "name": "Power Management",
+                        "code": "// Power management for NRF5340\n#include <zephyr/pm/pm.h>\n#include <hal/nrf_power.h>\n\n// Configure power management\nvoid power_management_init(void) {\n    // Enable DC/DC converter for efficiency\n    nrf_power_dcdcen_set(NRF_POWER, true);\n    \n    // Configure RAM retention in System OFF mode\n    NRF_POWER->RAM[0].POWERSET = 0xFFFFFFFF;\n    \n    // Configure deep sleep parameters\n    pm_state_force(0u, &(struct pm_state_info){PM_STATE_SOFT_OFF, 0, 0});\n}\n\n// Enter low power mode\nvoid enter_low_power_mode(void) {\n    // Prepare system for sleep\n    gpio_pin_configure(gpio_dev, LED_PIN, GPIO_OUTPUT_INACTIVE);\n    \n    // Enter System OFF mode\n    pm_state_force(0u, &(struct pm_state_info){PM_STATE_SOFT_OFF, 0, 0});\n    k_sleep(K_MSEC(1));\n}"
+                    }
+                ]
+            },
+            "nrf52840": {
+                "name": "NRF52840",
+                "description": "Powerful single-core SoC with extensive wireless capabilities and advanced power management for IoT applications.",
+                "initialization": "// NRF52840 Initialization\n#include <zephyr/kernel.h>\n#include <zephyr/drivers/gpio.h>\n#include <hal/nrf_power.h>\n\n// System initialization\nvoid system_init(void) {\n    // Enable DC/DC converter for improved power efficiency\n    NRF_POWER->DCDCEN = 1;\n    \n    // Configure high-frequency clock\n    NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;\n    NRF_CLOCK->TASKS_HFCLKSTART = 1;\n    while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0) {\n        // Wait for clock to start\n    }\n    \n    // Configure low-frequency clock for timers\n    NRF_CLOCK->LFCLKSRC = CLOCK_LFCLKSRC_SRC_Xtal << CLOCK_LFCLKSRC_SRC_Pos;\n    NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;\n    NRF_CLOCK->TASKS_LFCLKSTART = 1;\n    while (NRF_CLOCK->EVENTS_LFCLKSTARTED == 0) {\n        // Wait for clock to start\n    }\n}",
+                "peripherals": [
+                    {
+                        "name": "GPIO Configuration",
+                        "code": "// GPIO configuration for NRF52840\n#include <zephyr/drivers/gpio.h>\n\n#define LED0_PIN 13\n#define LED1_PIN 14\n#define BUTTON_PIN 11\n\nvoid gpio_init(void) {\n    // Get GPIO device\n    const struct device *gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));\n    if (!gpio_dev) {\n        return;\n    }\n    \n    // Configure LED pins as outputs\n    gpio_pin_configure(gpio_dev, LED0_PIN, GPIO_OUTPUT_ACTIVE | GPIO_ACTIVE_LOW);\n    gpio_pin_configure(gpio_dev, LED1_PIN, GPIO_OUTPUT_ACTIVE | GPIO_ACTIVE_LOW);\n    \n    // Configure button pin as input with pull-up\n    gpio_pin_configure(gpio_dev, BUTTON_PIN, GPIO_INPUT | GPIO_PULL_UP);\n    \n    // Configure button interrupt\n    gpio_pin_interrupt_configure(gpio_dev, BUTTON_PIN, GPIO_INT_EDGE_TO_ACTIVE);\n    \n    // Set up callback\n    static struct gpio_callback button_cb_data;\n    gpio_init_callback(&button_cb_data, button_callback, BIT(BUTTON_PIN));\n    gpio_add_callback(gpio_dev, &button_cb_data);\n}"
+                    },
+                    {
+                        "name": "BLE Setup",
+                        "code": "// BLE setup for NRF52840\n#include <bluetooth/bluetooth.h>\n#include <bluetooth/hci.h>\n#include <bluetooth/conn.h>\n#include <bluetooth/uuid.h>\n#include <bluetooth/gatt.h>\n\n// Define advertising data\nstatic const struct bt_data ad[] = {\n    BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),\n    BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0x0a, 0x18),  // Device Information Service\n};\n\n// Define scan response data\nstatic const struct bt_data sd[] = {\n    BT_DATA(BT_DATA_NAME_COMPLETE, \"NRF52840-Device\", 15),\n};\n\n// Connection callback\nstatic void connected(struct bt_conn *conn, uint8_t err) {\n    if (err) {\n        printk(\"Connection failed (err %u)\\n\", err);\n        return;\n    }\n    printk(\"Connected\\n\");\n}\n\n// Disconnection callback\nstatic void disconnected(struct bt_conn *conn, uint8_t reason) {\n    printk(\"Disconnected (reason %u)\\n\", reason);\n}\n\n// Define connection callbacks\nstatic struct bt_conn_cb conn_callbacks = {\n    .connected = connected,\n    .disconnected = disconnected,\n};\n\n// Initialize Bluetooth\nvoid ble_init(void) {\n    int err;\n    \n    // Initialize Bluetooth subsystem\n    err = bt_enable(NULL);\n    if (err) {\n        printk(\"Bluetooth init failed (err %d)\\n\", err);\n        return;\n    }\n    \n    // Register connection callbacks\n    bt_conn_cb_register(&conn_callbacks);\n    \n    // Start advertising\n    err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));\n    if (err) {\n        printk(\"Advertising failed to start (err %d)\\n\", err);\n        return;\n    }\n    \n    printk(\"Bluetooth initialized\\n\");\n}"
+                    },
+                    {
+                        "name": "Power Management",
+                        "code": "// Power management for NRF52840\n#include <zephyr/kernel.h>\n#include <hal/nrf_power.h>\n\n// Configure system for low power operation\nvoid power_config(void) {\n    // Enable DC/DC converter\n    NRF_POWER->DCDCEN = 1;\n    \n    // Configure RAM retention\n    NRF_POWER->RAM[0].POWER = 0x01;\n    NRF_POWER->RAM[1].POWER = 0x01;\n    NRF_POWER->RAM[2].POWER = 0x01;\n    NRF_POWER->RAM[3].POWER = 0x01;\n    NRF_POWER->RAM[4].POWER = 0x01;\n    NRF_POWER->RAM[5].POWER = 0x01;\n    NRF_POWER->RAM[6].POWER = 0x01;\n    NRF_POWER->RAM[7].POWER = 0x01;\n}\n\n// Enter system OFF mode\nvoid enter_system_off(void) {\n    // Prepare GPIOs for low power\n    const struct device *gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));\n    if (gpio_dev) {\n        // Configure all pins as inputs to reduce power\n        for (int i = 0; i < 32; i++) {\n            if (i != WAKEUP_PIN) { // Don't reconfigure wakeup pin\n                gpio_pin_configure(gpio_dev, i, GPIO_INPUT | GPIO_PULL_DOWN);\n            }\n        }\n    }\n    \n    // Configure wake-up source\n    NRF_POWER->SYSTEMOFF = 1;\n    k_sleep(K_MSEC(100)); // Give time for System OFF to take effect\n}"
+                    },
+                    {
+                        "name": "USB Device Setup",
+                        "code": "// USB Device setup for NRF52840\n#include <zephyr/usb/usb_device.h>\n#include <zephyr/usb/class/usb_cdc.h>\n\n#define DEVICE_NAME     \"NRF52840-USB-Device\"\n#define DEVICE_VERSION  \"1.0.0\"\n\n// USB device status callback\nstatic void status_cb(enum usb_dc_status_code status, const uint8_t *param) {\n    switch (status) {\n    case USB_DC_CONNECTED:\n        printk(\"USB connected\\n\");\n        break;\n    case USB_DC_DISCONNECTED:\n        printk(\"USB disconnected\\n\");\n        break;\n    case USB_DC_CONFIGURED:\n        printk(\"USB configured\\n\");\n        break;\n    case USB_DC_RESET:\n        printk(\"USB reset\\n\");\n        break;\n    case USB_DC_SUSPEND:\n        printk(\"USB suspended\\n\");\n        break;\n    case USB_DC_RESUME:\n        printk(\"USB resumed\\n\");\n        break;\n    case USB_DC_ERROR:\n        printk(\"USB error\\n\");\n        break;\n    default:\n        break;\n    };\n}\n\n// Initialize USB device\nvoid usb_init(void) {\n    int ret;\n    \n    // Enable USB regulator\n    NRF_POWER->USBREGSTATUS = 1;\n    \n    // Initialize USB device stack\n    ret = usb_enable(status_cb);\n    if (ret != 0) {\n        printk(\"Failed to enable USB (err %d)\\n\", ret);\n        return;\n    }\n    \n    printk(\"USB initialized\\n\");\n}"
+                    }
+                ]
+            },
+            "stm32h7": {
+                "name": "STM32H7 Series",
+                "description": "High-performance MCU series with state-of-the-art processing power and extensive peripheral options for demanding applications.",
+                "initialization": "// STM32H7 System Initialization\n#include \"stm32h7xx.h\"\n#include \"stm32h7xx_hal.h\"\n\n// Clock Configuration\nvoid SystemClock_Config(void) {\n    RCC_OscInitTypeDef RCC_OscInitStruct = {0};\n    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};\n    \n    // Configure power regulator voltage scale\n    __HAL_RCC_PWR_CLK_ENABLE();\n    HAL_PWREx_ConfigSupply(PWR_LDO_SUPPLY);\n    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);\n    \n    // Configure oscillators: HSE + PLL\n    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;\n    RCC_OscInitStruct.HSEState = RCC_HSE_ON;\n    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;\n    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;\n    RCC_OscInitStruct.PLL.PLLM = 5;\n    RCC_OscInitStruct.PLL.PLLN = 192;\n    RCC_OscInitStruct.PLL.PLLP = 2;\n    RCC_OscInitStruct.PLL.PLLQ = 4;\n    RCC_OscInitStruct.PLL.PLLR = 2;\n    RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_2;\n    RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;\n    RCC_OscInitStruct.PLL.PLLFRACN = 0;\n    HAL_RCC_OscConfig(&RCC_OscInitStruct);\n    \n    // Configure system clocks\n    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | \n                                  RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2 | \n                                  RCC_CLOCKTYPE_D1PCLK1 | RCC_CLOCKTYPE_D3PCLK1;\n    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;\n    RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;\n    RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;\n    RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;\n    RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;\n    RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;\n    RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;\n    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4);\n}",
+                "peripherals": [
+                    {
+                        "name": "GPIO Configuration",
+                        "code": "// GPIO configuration for STM32H7\n#include \"stm32h7xx_hal.h\"\n\nvoid GPIO_Init(void) {\n    GPIO_InitTypeDef GPIO_InitStruct = {0};\n    \n    // Enable GPIO clocks\n    __HAL_RCC_GPIOA_CLK_ENABLE();\n    __HAL_RCC_GPIOB_CLK_ENABLE();\n    __HAL_RCC_GPIOC_CLK_ENABLE();\n    \n    // Configure LED pin\n    GPIO_InitStruct.Pin = GPIO_PIN_7;\n    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;\n    GPIO_InitStruct.Pull = GPIO_NOPULL;\n    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;\n    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);\n    \n    // Configure button pin\n    GPIO_InitStruct.Pin = GPIO_PIN_13;\n    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;\n    GPIO_InitStruct.Pull = GPIO_PULLUP;\n    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);\n    \n    // Enable button interrupt\n    HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);\n    HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);\n}"
+                    },
+                    {
+                        "name": "Dual-Core Setup",
+                        "code": "// STM32H7 Dual-Core Setup (CM7+CM4)\n#include \"stm32h7xx.h\"\n\n// CM7 (Main core) code\nvoid CM7_CoreInit(void) {\n    // Enable CM4 core clock\n    __HAL_RCC_D2SRAM1_CLK_ENABLE();\n    __HAL_RCC_D2SRAM2_CLK_ENABLE();\n    __HAL_RCC_D2SRAM3_CLK_ENABLE();\n    \n    // Enable HSEM clock for core synchronization\n    __HAL_RCC_HSEM_CLK_ENABLE();\n    \n    // Take HSEM\n    while(HAL_HSEM_FastTake(0) != HAL_OK) {}\n    \n    // Boot CM4 core\n    HAL_RCCEx_EnableBootCore(RCC_BOOT_C2);\n    \n    // Release HSEM to notify CM4 that it can use the resource\n    HAL_HSEM_Release(0, 0);\n}\n\n// CM4 (Secondary core) code\nvoid CM4_CoreInit(void) {\n    // Wait until CM7 finishes its initialization\n    while(HAL_HSEM_FastTake(0) != HAL_OK) {}\n    HAL_HSEM_Release(0, 0);\n    \n    // Initialize peripherals controlled by CM4\n    // e.g., ADC, DAC, some communication interfaces\n}"
+                    },
+                    {
+                        "name": "Memory Management",
+                        "code": "// STM32H7 Memory Management\n#include \"stm32h7xx.h\"\n\nvoid MPU_Config(void) {\n    MPU_Region_InitTypeDef MPU_InitStruct;\n    \n    // Disable MPU\n    HAL_MPU_Disable();\n    \n    // Configure SRAM region for fast access\n    MPU_InitStruct.Enable = MPU_REGION_ENABLE;\n    MPU_InitStruct.Number = MPU_REGION_NUMBER0;\n    MPU_InitStruct.BaseAddress = 0x24000000; // SRAM1 base\n    MPU_InitStruct.Size = MPU_REGION_SIZE_512KB;\n    MPU_InitStruct.SubRegionDisable = 0x00;\n    MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;\n    MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;\n    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;\n    MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;\n    MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;\n    MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;\n    HAL_MPU_ConfigRegion(&MPU_InitStruct);\n    \n    // Configure SDRAM with appropriate caching\n    MPU_InitStruct.Enable = MPU_REGION_ENABLE;\n    MPU_InitStruct.Number = MPU_REGION_NUMBER1;\n    MPU_InitStruct.BaseAddress = 0xC0000000; // SDRAM base\n    MPU_InitStruct.Size = MPU_REGION_SIZE_32MB;\n    MPU_InitStruct.SubRegionDisable = 0x00;\n    MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;\n    MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;\n    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;\n    MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;\n    MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;\n    MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;\n    HAL_MPU_ConfigRegion(&MPU_InitStruct);\n    \n    // Enable MPU\n    HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);\n}"
+                    },
+                    {
+                        "name": "Cache Configuration",
+                        "code": "// STM32H7 Cache Configuration\n#include \"stm32h7xx.h\"\n\nvoid Cache_Enable(void) {\n    // SCB_EnableICache() - Enable and configure I-Cache\n    SCB_EnableICache();\n    \n    // SCB_EnableDCache() - Enable and configure D-Cache\n    SCB_EnableDCache();\n    \n    // Update CMSIS SystemCoreClock variable\n    SystemCoreClockUpdate();\n}"
+                    }
+                ]
+            },
+            "peripherals": {
+                "name": "Peripheral Integration",
+                "description": "Extensive experience in integrating and optimizing peripheral drivers for various communication protocols and sensors.",
+                "initialization": "// Common peripheral initialization for embedded systems\n#include <stdint.h>\n#include <stdbool.h>\n\n// Generic Peripheral Driver Structure\ntypedef struct {\n    void (*init)(void);\n    void (*deinit)(void);\n    bool (*isReady)(void);\n    int (*transfer)(uint8_t *txData, uint8_t *rxData, uint16_t length);\n    int (*read)(uint8_t *data, uint16_t length);\n    int (*write)(uint8_t *data, uint16_t length);\n} peripheral_driver_t;\n\n// Peripheral initialization function\nvoid peripheral_init(void) {\n    // Initialize system peripherals\n    uart_init();\n    spi_init();\n    i2c_init();\n    adc_init();\n    \n    // Configure interrupts\n    NVIC_SetPriority(UART_IRQn, 1);\n    NVIC_EnableIRQ(UART_IRQn);\n    \n    NVIC_SetPriority(SPI_IRQn, 2);\n    NVIC_EnableIRQ(SPI_IRQn);\n    \n    NVIC_SetPriority(I2C_IRQn, 2);\n    NVIC_EnableIRQ(I2C_IRQn);\n}",
+                "peripherals": [
+                    {
+                        "name": "SPI Interface",
+                        "code": "// SPI Interface for sensor communication\n\n// SPI Configuration structure\ntypedef struct {\n    uint32_t Mode;          // SPI mode (0-3)\n    uint32_t ClockFreq;     // Clock frequency\n    uint32_t DataSize;      // Data size (8/16 bits)\n    uint32_t FirstBit;      // MSB or LSB first\n    uint8_t CSPin;          // Chip select pin\n} spi_config_t;\n\n// Initialize SPI with configuration\nint spi_init(spi_config_t *config) {\n    // Enable SPI clock\n    SPI_CLOCK_ENABLE();\n    GPIO_CLOCK_ENABLE();\n    \n    // Configure GPIO pins for SPI\n    GPIO_InitStruct.Pin = SPI_SCK_PIN | SPI_MISO_PIN | SPI_MOSI_PIN;\n    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;\n    GPIO_InitStruct.Pull = GPIO_NOPULL;\n    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;\n    GPIO_InitStruct.Alternate = SPI_GPIO_AF;\n    HAL_GPIO_Init(SPI_GPIO_PORT, &GPIO_InitStruct);\n    \n    // Configure CS pin\n    GPIO_InitStruct.Pin = (1 << config->CSPin);\n    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;\n    GPIO_InitStruct.Pull = GPIO_PULLUP;\n    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;\n    HAL_GPIO_Init(CS_GPIO_PORT, &GPIO_InitStruct);\n    \n    // Set CS high (inactive)\n    HAL_GPIO_WritePin(CS_GPIO_PORT, (1 << config->CSPin), GPIO_PIN_SET);\n    \n    // Configure SPI peripheral\n    SPI_HandleTypeDef SpiHandle;\n    SpiHandle.Instance = SPI1;\n    SpiHandle.Init.Mode = SPI_MODE_MASTER;\n    SpiHandle.Init.Direction = SPI_DIRECTION_2LINES;\n    SpiHandle.Init.DataSize = (config->DataSize == 16) ? SPI_DATASIZE_16BIT : SPI_DATASIZE_8BIT;\n    SpiHandle.Init.CLKPolarity = (config->Mode & 0x02) ? SPI_POLARITY_HIGH : SPI_POLARITY_LOW;\n    SpiHandle.Init.CLKPhase = (config->Mode & 0x01) ? SPI_PHASE_2EDGE : SPI_PHASE_1EDGE;\n    SpiHandle.Init.NSS = SPI_NSS_SOFT;\n    SpiHandle.Init.BaudRatePrescaler = SPI_GetPrescaler(config->ClockFreq);\n    SpiHandle.Init.FirstBit = config->FirstBit;\n    SpiHandle.Init.TIMode = SPI_TIMODE_DISABLE;\n    SpiHandle.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;\n    \n    if (HAL_SPI_Init(&SpiHandle) != HAL_OK) {\n        return -1;\n    }\n    \n    return 0;\n}"
+                    },
+                    {
+                        "name": "I2C Interface",
+                        "code": "// I2C Interface for sensor and device communication\n\n// I2C Configuration structure\ntypedef struct {\n    uint32_t ClockSpeed;    // I2C clock speed\n    uint8_t OwnAddress;     // Own address (for slave mode)\n    uint8_t DutyCycle;      // I2C duty cycle\n} i2c_config_t;\n\n// Initialize I2C with configuration\nint i2c_init(i2c_config_t *config) {\n    // Enable I2C clock\n    I2C_CLOCK_ENABLE();\n    GPIO_CLOCK_ENABLE();\n    \n    // Configure GPIO pins for I2C\n    GPIO_InitStruct.Pin = I2C_SCL_PIN | I2C_SDA_PIN;\n    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;\n    GPIO_InitStruct.Pull = GPIO_PULLUP;\n    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;\n    GPIO_InitStruct.Alternate = I2C_GPIO_AF;\n    HAL_GPIO_Init(I2C_GPIO_PORT, &GPIO_InitStruct);\n    \n    // Configure I2C peripheral\n    I2C_HandleTypeDef I2cHandle;\n    I2cHandle.Instance = I2C1;\n    I2cHandle.Init.ClockSpeed = config->ClockSpeed;\n    I2cHandle.Init.DutyCycle = config->DutyCycle;\n    I2cHandle.Init.OwnAddress1 = config->OwnAddress << 1;\n    I2cHandle.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;\n    I2cHandle.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;\n    I2cHandle.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;\n    I2cHandle.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;\n    \n    if (HAL_I2C_Init(&I2cHandle) != HAL_OK) {\n        return -1;\n    }\n    \n    return 0;\n}\n\n// Write data to I2C device\nint i2c_write(uint8_t device_addr, uint8_t reg_addr, uint8_t *data, uint16_t length) {\n    // Create buffer with register address as first byte\n    uint8_t buffer[length + 1];\n    buffer[0] = reg_addr;\n    for (uint16_t i = 0; i < length; i++) {\n        buffer[i + 1] = data[i];\n    }\n    \n    // Write data to device\n    if (HAL_I2C_Master_Transmit(&I2cHandle, device_addr << 1, buffer, length + 1, 1000) != HAL_OK) {\n        return -1;\n    }\n    \n    return 0;\n}"
+                    },
+                    {
+                        "name": "UART Communication",
+                        "code": "// UART Communication for serial interface\n\n// UART Configuration structure\ntypedef struct {\n    uint32_t BaudRate;      // Baudrate\n    uint32_t WordLength;    // Data bits (8 or 9)\n    uint32_t StopBits;      // Stop bits (1 or 2)\n    uint32_t Parity;        // Parity (none, even, odd)\n    uint32_t Mode;          // Tx, Rx, or both\n    uint32_t HwFlowCtl;     // Hardware flow control\n} uart_config_t;\n\n// Initialize UART with configuration\nint uart_init(uart_config_t *config) {\n    // Enable UART clock\n    UART_CLOCK_ENABLE();\n    GPIO_CLOCK_ENABLE();\n    \n    // Configure GPIO pins for UART\n    GPIO_InitStruct.Pin = UART_TX_PIN | UART_RX_PIN;\n    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;\n    GPIO_InitStruct.Pull = GPIO_PULLUP;\n    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;\n    GPIO_InitStruct.Alternate = UART_GPIO_AF;\n    HAL_GPIO_Init(UART_GPIO_PORT, &GPIO_InitStruct);\n    \n    // Configure UART peripheral\n    UART_HandleTypeDef UartHandle;\n    UartHandle.Instance = UART1;\n    UartHandle.Init.BaudRate = config->BaudRate;\n    UartHandle.Init.WordLength = config->WordLength;\n    UartHandle.Init.StopBits = config->StopBits;\n    UartHandle.Init.Parity = config->Parity;\n    UartHandle.Init.Mode = config->Mode;\n    UartHandle.Init.HwFlowCtl = config->HwFlowCtl;\n    UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;\n    \n    if (HAL_UART_Init(&UartHandle) != HAL_OK) {\n        return -1;\n    }\n    \n    return 0;\n}"
+                    }
+                ]
+            }
+        }
+    </script>
 </head>
 <body>
-    <div class="loading-screen">
-        <div class="loading-content">
-            <h1>INITIALIZING EMBEDDED WORLD</h1>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
+    <div class="custom-cursor"></div>
+    <canvas id="matrix-canvas" class="matrix-canvas"></canvas>
+    
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1 class="glitch" data-text="A.S">A.S</h1>
+                </div>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#about" class="hover-target">About</a></li>
+                        <li><a href="#skills" class="hover-target">Skills</a></li>
+                        <li><a href="#experience" class="hover-target">Experience</a></li>
+                        <li><a href="#microcontrollers" class="hover-target">MCUs</a></li>
+                        <li><a href="#peripherals" class="hover-target">Peripherals</a></li>
+                        <li><a href="#contact" class="hover-target">Contact</a></li>
+                    </ul>
+                </nav>
             </div>
-            <div class="loading-text">Initializing navigation systems...</div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title glitch" data-text="Ananthashayan S">Ananthashayan S</h1>
+                    <h2 class="hero-subtitle">Embedded Systems Engineer</h2>
+                    <p>Specializing in <span class="typing-text">STM32 & nRF Microcontrollers</span></p>
+                    <div class="hero-cta">
+                        <a href="#contact" class="button hover-target">Connect</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="container">
+                <h2 class="section-title reveal">About Me</h2>
+                <div class="terminal-section reveal">
+                    <div class="terminal-header">user@system ~ whoami</div>
+                    <div class="command-output">
+                        I'm an Embedded Systems Engineer specializing in STM32 and nRF microcontrollers with expertise in firmware development, PCB design, and IoT solutions.
+                        
+                        With a strong foundation in low-level programming and hardware integration, I develop solutions for complex embedded challenges including wireless communication, sensor integration, and real-time applications.
+                        
+                        My technical approach emphasizes clean architecture, comprehensive documentation, and robust testing methodologies to ensure system reliability and maintainability.
+                    </div>
+                    <div class="command-text">cat skills.txt</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="skills-section">
+            <div class="container">
+                <h2 class="section-title reveal">Technical Skills</h2>
+                <div class="skills-container">
+                    <div class="skill-item reveal">
+                        <div class="skill-title">
+                            <span class="skill-icon"><i class="fas fa-microchip"></i></span>
+                            Microcontrollers
+                        </div>
+                        <div class="skill-command-output" data-content="STM32H, STM32F, nRF53, nRF52, ESP32">
+                            > STM32H Series
+                            > STM32F Series
+                            > nRF53 (Dual-core ARM Cortex-M33)
+                            > nRF52 Series
+                            > ESP32/ESP32S3, LicheeRV Nano SG2002
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-fill" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item reveal">
+                        <div class="skill-title">
+                            <span class="skill-icon"><i class="fas fa-code"></i></span>
+                            Programming Languages
+                        </div>
+                        <div class="skill-command-output" data-content="C, C++, Python">
+                            > C (Embedded)
+                            > C++ (Firmware)
+                            > Python (Automation)
+                            > Assembly (ARM)
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-fill" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item reveal">
+                        <div class="skill-title">
+                            <span class="skill-icon"><i class="fas fa-broadcast-tower"></i></span>
+                            Protocols
+                        </div>
+                        <div class="skill-command-output" data-content="I2C, SPI, UART, I2S, DCMI, SDMMC, GPIO, BLE, Wi-Fi">
+                            > I2C/SPI/UART
+                            > BLE 1M/2M
+                            > Wi-Fi
+                            > DCMI, SDMMC
+                            > I2S
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item reveal">
+                        <div class="skill-title">
+                            <span class="skill-icon"><i class="fas fa-tools"></i></span>
+                            Tools & Software
+                        </div>
+                        <div class="skill-command-output" data-content="Altium, KiCad, Keil MDK">
+                            > Altium, KiCad
+                            > STM32Cube IDE
+                            > Keil MDK
+                            > nRF Connect
+                            > Visual Studio Code
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-fill" style="width: 88%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item reveal">
+                        <div class="skill-title">
+                            <span class="skill-icon"><i class="fas fa-cogs"></i></span>
+                            RTOS & SDKs
+                        </div>
+                        <div class="skill-command-output" data-content="Zephyr RTOS, nRF5 SDK, nRF Connect SDK, STM32Cube Framework">
+                            > Zephyr RTOS
+                            > nRF5 SDK
+                            > nRF Connect SDK
+                            > STM32Cube Framework
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item reveal">
+                        <div class="skill-title">
+                            <span class="skill-icon"><i class="fas fa-project-diagram"></i></span>
+                            Other Skills
+                        </div>
+                        <div class="skill-command-output" data-content="Schematic capture, PCB layout, Firmware debugging, Power optimization">
+                            > Problem-solving
+                            > Team collaboration
+                            > Technical documentation
+                            > Project management 
+                            > PCB Design
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-fill" style="width: 87%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="experience-section">
+            <div class="container">
+                <h2 class="section-title reveal">Experience</h2>
+                <div class="experience-timeline">
+                    <div class="experience-item reveal">
+                        <div class="experience-header">
+                            <h3>Embedded Systems Engineer</h3>
+                            <div class="experience-meta">
+                                <span class="company">Panoculon Labs</span>
+                                <span class="duration">Aug 2024 - Present</span>
+                            </div>
+                        </div>
+                        <div class="experience-content">
+                            <ul>
+                                <li>Architected and implemented firmware for Smart Spectacles</li>
+                                <li>Integrated protocols including I2C, I2S, SPI, SDMMC, and BLE for sensor integration</li>
+                                <li>Engineered complete PCB designs and handled all hardware and firmware components for the product</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="experience-item reveal">
+                        <div class="experience-header">
+                            <h3>Hardware Engineer Intern</h3>
+                            <div class="experience-meta">
+                                <span class="company">Oralens Healthcare</span>
+                                <span class="duration">Nov 2023 - June 2024</span>
+                            </div>
+                        </div>
+                        <div class="experience-content">
+                            <ul>
+                                <li>Engineered a smart dental device with secure IoT connectivity, enabling remote monitoring and data collection</li>
+                                <li>Implemented MEMS microphone integration for precise TMJ analysis, enhancing diagnostic capabilities</li>
+                                <li>Created AI/ML algorithms on Raspberry Pi platform for oral condition detection with 89% accuracy</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="experience-item reveal">
+                        <div class="experience-header">
+                            <h3>Project Associate Intern</h3>
+                            <div class="experience-meta">
+                                <span class="company">Nanostar Technologies</span>
+                                <span class="duration">Sep 2023 - Oct 2023</span>
+                            </div>
+                        </div>
+                        <div class="experience-content">
+                            <ul>
+                                <li>Programmed firmware for Wireless Water Level Monitoring System using RF communication and STM32F microcontrollers</li>
+                                <li>Optimized RF transceiver interfaces and sensor calibration algorithms, improving transmission range and measurement accuracy</li>
+                                <li>Designed PCB layout for water level sensors and RF modules using Altium Designer for product R&D phase</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="education-certifications reveal">
+                    <div class="education">
+                        <h3>Education</h3>
+                        <div class="education-item">
+                            <h4>BE. Electronics and Communication Engineering</h4>
+                            <div class="education-meta">
+                                <span class="institution">Sri Ramakrishna Engineering College, Coimbatore</span>
+                                <span class="graduation">June 2024</span>
+                            </div>
+                            <p>GPA: 8.13/10.00</p>
+                        </div>
+                    </div>
+                    
+                    <div class="certifications">
+                        <h3>Certifications</h3>
+                        <div class="certification-item">
+                            <h4>nRF Connect SDK Fundamentals</h4>
+                            <span class="certification-date">2025</span>
+                            <p>Comprehensive certification covering BLE application development, power optimization, and peripheral integration using nRF Connect SDK and Zephyr RTOS</p>
+                        </div>
+                        <div class="certification-item">
+                            <h4>EE5402-Industrial Internet of Things - IIT Madras</h4>
+                            <span class="certification-status">Ongoing</span>
+                            <p>Advanced course covering IoT architectures, protocols, security, and industrial applications including edge computing, MQTT, CoAP, and cloud integration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="microcontrollers" class="microcontrollers-section">
+            <div class="container">
+                <h2 class="section-title reveal">Microcontroller Expertise</h2>
+                
+                <div class="pcb-traces">
+                    <div class="pcb-trace trace-h-1"></div>
+                    <div class="pcb-trace trace-h-2"></div>
+                    <div class="pcb-trace trace-h-3"></div>
+                    <div class="pcb-trace trace-v-1"></div>
+                    <div class="pcb-trace trace-v-2"></div>
+                    <div class="pcb-trace trace-v-3"></div>
+                </div>
+                
+                <div class="microcontrollers-container">
+                    <div class="pcb-component">
+                        <h3 class="component-name">NRF5340</h3>
+                        <p class="component-details">Advanced dual-core SoC with dedicated application and network processing cores based on ARM Cortex-M33 architecture.</p>
+                        <div class="component-specs">
+                            <p>Core: <span>Dual Cortex-M33</span></p>
+                            <p>Flash: <span>1MB</span></p>
+                            <p>RAM: <span>512KB</span></p>
+                            <p>Connectivity: <span>BLE 5.2, Thread, Zigbee</span></p>
+                            <p>Security: <span>ARM TrustZone, Root of Trust</span></p>
+                        </div>
+                        <div class="pcb-component-pins">
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pcb-component">
+                        <h3 class="component-name">NRF52840</h3>
+                        <p class="component-details">Powerful single-core SoC with extensive wireless capabilities and advanced power management for IoT applications.</p>
+                        <div class="component-specs">
+                            <p>Core: <span>Cortex-M4F</span></p>
+                            <p>Flash: <span>1MB</span></p>
+                            <p>RAM: <span>256KB</span></p>
+                            <p>Connectivity: <span>BLE 5.0, Thread, Zigbee</span></p>
+                            <p>Security: <span>Crypto Accelerator, AES</span></p>
+                        </div>
+                        <div class="pcb-component-pins">
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pcb-component">
+                        <h3 class="component-name">STM32H7 Series</h3>
+                        <p class="component-details">High-performance MCU series with state-of-the-art processing power and extensive peripheral options for demanding applications.</p>
+                        <div class="component-specs">
+                            <p>Core: <span>Cortex-M7 (+M4 in dual-core)</span></p>
+                            <p>Speed: <span>Up to 480 MHz</span></p>
+                            <p>Flash: <span>Up to 2MB</span></p>
+                            <p>RAM: <span>Up to 1MB</span></p>
+                            <p>Peripherals: <span>Ethernet, USB OTG, CAN FD</span></p>
+                        </div>
+                        <div class="pcb-component-pins">
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pcb-component">
+                        <h3 class="component-name">STM32F7 Series</h3>
+                        <p class="component-details">High-performance MCUs designed for applications requiring fast processing and rich connectivity with excellent power efficiency.</p>
+                        <div class="component-specs">
+                            <p>Core: <span>Cortex-M7</span></p>
+                            <p>Speed: <span>Up to 216 MHz</span></p>
+                            <p>Flash: <span>Up to 2MB</span></p>
+                            <p>RAM: <span>Up to 512KB</span></p>
+                            <p>Peripherals: <span>LCD-TFT, Camera, Crypto</span></p>
+                        </div>
+                        <div class="pcb-component-pins">
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pcb-component">
+                        <h3 class="component-name">ESP32</h3>
+                        <p class="component-details">Feature-rich SoC with integrated Wi-Fi and Bluetooth connectivity designed for a wide range of IoT applications.</p>
+                        <div class="component-specs">
+                            <p>Core: <span>Dual-core Xtensa LX6</span></p>
+                            <p>Speed: <span>Up to 240 MHz</span></p>
+                            <p>Flash: <span>External, up to 16MB</span></p>
+                            <p>RAM: <span>520KB SRAM</span></p>
+                            <p>Connectivity: <span>Wi-Fi, Bluetooth 4.2</span></p>
+                        </div>
+                        <div class="pcb-component-pins">
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pcb-component">
+                        <h3 class="component-name">CC3200</h3>
+                        <p class="component-details">Wi-Fi enabled microcontroller from Texas Instruments designed for Internet of Things applications with built-in security features.</p>
+                        <div class="component-specs">
+                            <p>Core: <span>Cortex-M4</span></p>
+                            <p>Speed: <span>80 MHz</span></p>
+                            <p>Flash: <span>1MB</span></p>
+                            <p>RAM: <span>256KB</span></p>
+                            <p>Connectivity: <span>Wi-Fi 802.11 b/g/n</span></p>
+                        </div>
+                        <div class="pcb-component-pins">
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                            <div class="pcb-pin"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="peripherals" class="peripherals-section">
+            <div class="container">
+                <h2 class="section-title reveal">Peripheral Integration</h2>
+                <div class="peripheral-container reveal">
+                    <div class="peripheral-description">
+                        <p>Extensive experience with integrating and configuring peripherals across different microcontroller families:</p>
+                        <ul>
+                            <li>Communication interfaces (SPI, I2C, UART, I2S, USB)</li>
+                            <li>Wireless protocols (BLE, Thread, Zigbee, Wi-Fi)</li>
+                            <li>Sensor integration (MEMS, environmental, biometric)</li>
+                            <li>Memory interfaces (QSPI Flash, SDMMC, external RAM)</li>
+                            <li>Display drivers (LCD, OLED, E-paper)</li>
+                            <li>Power management peripherals</li>
+                        </ul>
+                        <p>Each peripheral is configured with optimized parameters for the specific application requirements, balancing performance, power consumption, and reliability.</p>
+                    </div>
+                    <div class="peripheral-showcase">
+                        <div class="peripheral-code-block">
+                            <div class="terminal-header">Generic Peripheral Driver Interface</div>
+                            <pre class="code-snippet"><code>// Generic Peripheral Driver Structure
+typedef struct {
+    void (*init)(void);
+    void (*deinit)(void);
+    bool (*isReady)(void);
+    int (*transfer)(uint8_t *txData, uint8_t *rxData, uint16_t length);
+    int (*read)(uint8_t *data, uint16_t length);
+    int (*write)(uint8_t *data, uint16_t length);
+} peripheral_driver_t;
+
+// Platform-agnostic initialization routine
+void peripheral_init(void) {
+    // Initialize system peripherals
+    uart_init();
+    spi_init();
+    i2c_init();
+    adc_init();
+    
+    // Configure interrupts with appropriate priorities
+    NVIC_SetPriority(UART_IRQn, 1);
+    NVIC_EnableIRQ(UART_IRQn);
+    
+    NVIC_SetPriority(SPI_IRQn, 2);
+    NVIC_EnableIRQ(SPI_IRQn);
+    
+    NVIC_SetPriority(I2C_IRQn, 2);
+    NVIC_EnableIRQ(I2C_IRQn);
+}</code></pre>
+                            <div class="peripheral-tabs">
+                                <button class="tab-button active" data-tab="spi-tab">SPI</button>
+                                <button class="tab-button" data-tab="i2c-tab">I2C</button>
+                                <button class="tab-button" data-tab="uart-tab">UART</button>
+                                <button class="tab-button" data-tab="ble-tab">BLE</button>
+                            </div>
+                            <div class="peripheral-tabs-content">
+                                <div id="spi-tab" class="tab-content active">
+                                    <pre class="code-snippet"><code>// SPI Interface for sensor communication
+// SPI Configuration structure
+typedef struct {
+    uint32_t Mode;          // SPI mode (0-3)
+    uint32_t ClockFreq;     // Clock frequency
+    uint32_t DataSize;      // Data size (8/16 bits)
+    uint32_t FirstBit;      // MSB or LSB first
+    uint8_t CSPin;          // Chip select pin
+} spi_config_t;
+
+int spi_init(spi_config_t *config) {
+    // Enable SPI clock
+    SPI_CLOCK_ENABLE();
+    GPIO_CLOCK_ENABLE();
+    
+    // Configure GPIO pins for SPI
+    GPIO_InitStruct.Pin = SPI_SCK_PIN | SPI_MISO_PIN | SPI_MOSI_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = SPI_GPIO_AF;
+    HAL_GPIO_Init(SPI_GPIO_PORT, &GPIO_InitStruct);</code></pre>
+                                </div>
+                                <div id="i2c-tab" class="tab-content">
+                                    <pre class="code-snippet"><code>// I2C Interface for sensor and device communication
+// I2C Configuration structure
+typedef struct {
+    uint32_t ClockSpeed;    // I2C clock speed
+    uint8_t OwnAddress;     // Own address (for slave mode)
+    uint8_t DutyCycle;      // I2C duty cycle
+} i2c_config_t;
+
+int i2c_init(i2c_config_t *config) {
+    // Enable I2C clock
+    I2C_CLOCK_ENABLE();
+    GPIO_CLOCK_ENABLE();
+    
+    // Configure GPIO pins for I2C
+    GPIO_InitStruct.Pin = I2C_SCL_PIN | I2C_SDA_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = I2C_GPIO_AF;
+    HAL_GPIO_Init(I2C_GPIO_PORT, &GPIO_InitStruct);</code></pre>
+                                </div>
+                                <div id="uart-tab" class="tab-content">
+                                    <pre class="code-snippet"><code>// UART Communication for serial interface
+// UART Configuration structure
+typedef struct {
+    uint32_t BaudRate;      // Baudrate
+    uint32_t WordLength;    // Data bits (8 or 9)
+    uint32_t StopBits;      // Stop bits (1 or 2)
+    uint32_t Parity;        // Parity (none, even, odd)
+    uint32_t Mode;          // Tx, Rx, or both
+    uint32_t HwFlowCtl;     // Hardware flow control
+} uart_config_t;
+
+int uart_init(uart_config_t *config) {
+    // Enable UART clock
+    UART_CLOCK_ENABLE();
+    GPIO_CLOCK_ENABLE();
+    
+    // Configure GPIO pins for UART
+    GPIO_InitStruct.Pin = UART_TX_PIN | UART_RX_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = UART_GPIO_AF;
+    HAL_GPIO_Init(UART_GPIO_PORT, &GPIO_InitStruct);</code></pre>
+                                </div>
+                                <div id="ble-tab" class="tab-content">
+                                    <pre class="code-snippet"><code>// BLE setup for NRF5340
+#include <bluetooth/bluetooth.h>
+#include <bluetooth/hci.h>
+#include <bluetooth/uuid.h>
+
+// Advertising data
+static const struct bt_data ad[] = {
+    BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL)),
+};
+
+static void bt_ready(int err) {
+    if (err) {
+        printk("Bluetooth init failed (err %d)\n", err);
+        return;
+    }
+    
+    printk("Bluetooth initialized\n");
+    
+    // Start advertising
+    err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
+    if (err) {
+        printk("Advertising failed to start (err %d)\n", err);
+        return;
+    }
+    
+    printk("Advertising successfully started\n");
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2 class="section-title reveal">Contact</h2>
+                <div class="terminal-section reveal">
+                    <div class="terminal-header">user@system ~ contact</div>
+                    <div class="command-output">
+                        I'm always interested in discussing embedded systems challenges and opportunities.
+                        Whether you need consulting on a project, firmware development, or just want to connect,
+                        reach out through any of these channels:
+                        
+                        <i class="fas fa-envelope"></i> Email: ananthashayan1108@gmail.com
+                        <i class="fas fa-phone"></i> Phone: +91 9994850136
+                        <i class="fab fa-linkedin"></i> LinkedIn: linkedin.com/in/ananthashayan
+                        <i class="fab fa-github"></i> GitHub: github.com/ananthashayan
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Ananthashayan S</h3>
+                    <p>Embedded Systems Developer specializing in NRF5340 and STM32H7 microcontrollers</p>
+                    <div class="social-icons">
+                        <a href="#" class="hover-target"><i class="fab fa-github"></i></a>
+                        <a href="#" class="hover-target"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="hover-target"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#about" class="hover-target">About</a></li>
+                        <li><a href="#skills" class="hover-target">Skills</a></li>
+                        <li><a href="#experience" class="hover-target">Experience</a></li>
+                        <li><a href="#microcontrollers" class="hover-target">MCUs</a></li>
+                        <li><a href="#peripherals" class="hover-target">Peripherals</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                © <span id="current-year">2023</span> Ananthashayan S. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Terminal Modal for PCB components -->
+    <div class="terminal-modal" id="componentModal">
+        <div class="terminal-modal-close">&times;</div>
+        <div class="terminal-content">
+            <!-- Populated dynamically -->
         </div>
     </div>
 
-    <div class="experience">
-        <!-- 3D canvas will be injected here -->
+    <!-- Command Line Interface -->
+    <div class="cli-container">
+        <div class="cli-input-container">
+            <span class="cli-prompt">guest@portfolio:~$</span>
+            <input type="text" class="cli-input" placeholder="Type 'help' for available commands...">
+        </div>
+        <div class="cli-output"></div>
     </div>
 
-    <div class="user-interface">
-        <div class="navigation">
-            <button class="nav-button" data-section="about">About</button>
-            <button class="nav-button" data-section="skills">Skills</button>
-            <button class="nav-button" data-section="projects">Projects</button>
-            <button class="nav-button" data-section="experience">Experience</button>
-            <button class="nav-button" data-section="contact">Contact</button>
-        </div>
-
-        <div class="panel" id="about">
-            <h2>About Me</h2>
-            <p>Embedded Systems Engineer specializing in NRF5340 and STM32H7 microcontrollers. Passionate about developing efficient, reliable systems that bridge the digital and physical worlds.</p>
-            <p>With over 10 years of experience in the field, I've developed solutions for industrial, consumer, medical, and IoT applications, always striving for optimal power efficiency and performance.</p>
-        </div>
-
-        <div class="panel" id="skills">
-            <h2>Skills</h2>
-            <ul>
-                <li>Embedded C/C++ Development</li>
-                <li>Real-Time Operating Systems (FreeRTOS)</li>
-                <li>NRF5340 Dual-Core Programming</li>
-                <li>STM32H7 Performance Optimization</li>
-                <li>Bluetooth Low Energy (BLE) Implementation</li>
-                <li>Hardware Debugging & Signal Analysis</li>
-                <li>PCB Design & Circuit Analysis</li>
-                <li>IoT Protocols & Communication</li>
-                <li>Power Management Optimization</li>
-                <li>Embedded Linux Development</li>
-            </ul>
-        </div>
-
-        <div class="panel" id="projects">
-            <h2>Projects</h2>
-            <div class="project">
-                <h3>Wireless Sensor Network</h3>
-                <p>Developed a low-power mesh network using NRF5340 microcontrollers for industrial monitoring. The system achieves battery life of over 5 years while maintaining reliable data transmission under harsh conditions.</p>
-            </div>
-            <div class="project">
-                <h3>Advanced Motor Control System</h3>
-                <p>Created a high-performance motor controller using STM32H7 with real-time feedback. Features precision control of brushless DC motors for robotics applications with sub-millisecond response time.</p>
-            </div>
-            <div class="project">
-                <h3>Medical Device Prototype</h3>
-                <p>Designed an FDA-compliant wearable medical device with secure data transmission. Implemented AES-256 encryption and BLE 5.0 protocols to ensure patient data security while maximizing battery life.</p>
-            </div>
-            <div class="project">
-                <h3>IoT Gateway Solution</h3>
-                <p>Developed a multi-protocol gateway that bridges BLE, Zigbee, and Wi-Fi networks for smart home applications. Optimized for reliability and throughput using dual-core architecture.</p>
-            </div>
-        </div>
-
-        <div class="panel" id="experience">
-            <h2>Experience</h2>
-            <div class="job">
-                <h3>Senior Embedded Engineer</h3>
-                <p>Developing firmware for next-generation IoT products with stringent power requirements. Lead architecture design for multi-processor systems, including nRF5340 and STM32H7 platforms.</p>
-            </div>
-            <div class="job">
-                <h3>Firmware Developer</h3>
-                <p>Led development of communication protocols for industrial automation systems. Implemented reliable mesh networks for factory floor monitoring with 99.99% uptime.</p>
-            </div>
-            <div class="job">
-                <h3>Hardware Engineer</h3>
-                <p>Designed PCBs for embedded systems with a focus on signal integrity and EMI/EMC compliance. Successfully passed FCC and CE certification for multiple products.</p>
-            </div>
-        </div>
-
-        <div class="panel" id="contact">
-            <h2>Contact</h2>
-            <p>Get in touch to discuss your embedded systems needs:</p>
-            <a href="mailto:contact@example.com" class="contact-link">contact@example.com</a>
-            <div class="social-links">
-                <a href="https://github.com/yourusername" target="_blank">GitHub</a>
-                <a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="overlay">
-        <div class="info-box">
-            <h3>Welcome to My Embedded Systems Portfolio</h3>
-            <ul>
-                <li>Navigate this 3D space using <kbd>WASD</kbd> or arrow keys</li>
-                <li>Look around using your mouse</li>
-                <li>Press <kbd>Space</kbd> to jump</li>
-                <li>Click on objects to interact with them</li>
-                <li>Find the spaceship to travel between areas quickly</li>
-                <li>Explore STM32 and nRF5 showcases</li>
-            </ul>
-            <button class="close-btn">Start Exploring</button>
-        </div>
-    </div>
-
-    <div class="spaceship-indicator">SPACESHIP MODE</div>
-    <button class="help-button" title="Show Controls">?</button>
-
-    <script type="module" src="src/main.js"></script>
+    <!-- Sound effects -->
+    <audio id="keypress-sound" src="sounds/keypress.mp3" preload="auto"></audio>
+    <audio id="click-sound" src="sounds/click.mp3" preload="auto"></audio>
+    <audio id="hover-sound" src="sounds/hover.mp3" preload="auto"></audio>
+    <audio id="error-sound" src="sounds/error.mp3" preload="auto"></audio>
+    <audio id="success-sound" src="sounds/success.mp3" preload="auto"></audio>
+    
+    <script src="scripts/main.js"></script>
 </body>
 </html> 
