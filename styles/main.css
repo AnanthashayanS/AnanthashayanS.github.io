@@ -818,9 +818,10 @@ section {
     margin-bottom: 50px;
     text-align: center;
     position: relative;
-    display: inline-block;
-    left: 50%;
-    transform: translateX(-50%);
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .section-title::after {
@@ -843,7 +844,7 @@ section {
 /* Terminal sections */
 .terminal-section {
     background-color: var(--terminal-bg);
-    border: 1px solid var(--terminal-dim);
+    border: 1px solid var(--terminal-border);
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
@@ -851,8 +852,8 @@ section {
 }
 
 .terminal-header {
-    background-color: var(--terminal-dim);
-    color: var(--dark);
+    background-color: var(--terminal-border);
+    color: var(--terminal-text);
     padding: 10px 15px;
     font-size: 14px;
     font-weight: 600;
@@ -860,16 +861,17 @@ section {
 
 .command-output {
     background-color: var(--terminal-bg-alt);
-    padding: 15px;
+    padding: 20px;
     border-radius: 0 0 5px 5px;
     font-size: 0.9rem;
-    line-height: 1.6;
+    line-height: 1.7;
     white-space: pre-wrap;
     word-break: break-word;
+    color: var(--terminal-text);
 }
 
 .command-text {
-    padding: 0 20px 20px;
+    padding: 15px 20px 15px 20px;
     color: var(--terminal-text);
     font-size: 14px;
     font-weight: 500;
@@ -934,9 +936,22 @@ section {
     font-size: 0.9rem;
     color: var(--terminal-text);
     padding: 10px 0;
-    white-space: pre-wrap;
-    word-break: break-word;
+    line-height: 1.8;
     position: relative;
+}
+
+/* Add styling for the list items within skill-command-output */
+.skill-command-output > div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.skill-command-output > div::before {
+    content: '> ';
+    color: var(--primary);
+    margin-right: 8px;
+    font-weight: 600;
 }
 
 .skill-progress {
@@ -944,6 +959,7 @@ section {
     background-color: var(--lighter-dark);
     border-radius: 2px;
     overflow: hidden;
+    margin-top: 15px;
 }
 
 .skill-progress-fill {
@@ -1443,7 +1459,7 @@ footer {
     left: 0;
     width: 100%;
     background-color: var(--terminal-bg);
-    border-top: 1px solid var(--terminal-dim);
+    border-top: 1px solid var(--terminal-border);
     transform: translateY(100%);
     transition: transform 0.3s ease;
     z-index: 1001;
