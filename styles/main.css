@@ -943,15 +943,17 @@ section {
 /* Add styling for the list items within skill-command-output */
 .skill-command-output > div {
     display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+    align-items: baseline;
+    margin-bottom: 8px;
 }
 
 .skill-command-output > div::before {
     content: '> ';
     color: var(--primary);
-    margin-right: 8px;
+    margin-right: 10px;
     font-weight: 600;
+    flex-shrink: 0;
+    line-height: 1;
 }
 
 .skill-progress {
@@ -1706,4 +1708,15 @@ body.nav-open {
 .mobile-nav-toggle.active {
     background-color: var(--terminal-green-dim);
     border-color: var(--terminal-green);
+}
+
+#certifications .command-output strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--terminal-green);
+}
+
+#certifications .command-output {
+    padding: 20px;
+    line-height: 1.8;
 } 
