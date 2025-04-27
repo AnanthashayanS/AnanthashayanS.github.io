@@ -1720,4 +1720,19 @@ body.nav-open {
 #certifications .command-output {
     padding: 20px;
     line-height: 1.8;
+}
+
+/* Added styling for Languages Section */
+.languages-section {
+    background-color: rgba(12, 12, 12, 0.8); /* Same as education */
+    backdrop-filter: blur(10px);
+}
+
+.languages-section .command-output div {
+    margin-bottom: 8px; /* Spacing between language items */
+}
+
+.languages-section .command-output strong {
+    color: var(--terminal-green); /* Highlight language name */
+    margin-right: 5px;
 } 
