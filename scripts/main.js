@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize matrix background effect
     initMatrixEffect();
     
-    // Initialize peripheral tabs
-    initPeripheralTabs();
+    // Initialize mobile navigation
+    initMobileNav();
 });
 
 /**
@@ -1187,48 +1187,37 @@ function initRevealAnimations() {
     });
 }
 
-// Initialize peripheral tabs
-function initPeripheralTabs() {
-    const tabButtons = document.querySelectorAll('.peripheral-tabs .tab-button');
-    const tabContents = document.querySelectorAll('.peripheral-tabs-content .tab-content');
+/**
+ * Initialize mobile navigation toggle
+ */
+function initMobileNav() {
+    const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
     
-    if (!tabButtons.length || !tabContents.length) return;
+    if (!mobileNavToggle || !navLinks) return;
     
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove active class from all buttons and contents
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Add active class to current button and corresponding content
-            button.classList.add('active');
-            const tabId = button.getAttribute('data-tab');
-            const activeTab = document.getElementById(tabId);
-            
-            if (activeTab) {
-                activeTab.classList.add('active');
-                
-                // Add typewriter effect to code
-                const codeElement = activeTab.querySelector('code');
-                if (codeElement) {
-                    const originalCode = codeElement.textContent;
-                    codeElement.textContent = '';
-                    let i = 0;
-                    const typeSpeed = 10; // Faster typing for code
-                    
-                    function typeCode() {
-                        if (i < originalCode.length) {
-                            codeElement.textContent += originalCode.charAt(i);
-                            i++;
-                            setTimeout(typeCode, typeSpeed);
-                        }
-                    }
-                    typeCode();
-                }
-                
-                // Play sound effect
-                playSound('key-press');
-            }
+    mobileNavToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        
+        // Change icon based on menu state
+        const icon = mobileNavToggle.querySelector('i');
+        if (navLinks.classList.contains('active')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+    });
+    
+    // Close mobile menu when clicking on a link
+    const links = navLinks.querySelectorAll('a');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            const icon = mobileNavToggle.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
         });
     });
 }
@@ -1242,7 +1231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     animateSkillProgress();
     initMicrocontrollerComponents();
     initRevealAnimations();
-    initPeripheralTabs();
+    initMobileNav();
     
     // Type intro text
     const typingElement = document.querySelector('.typing-text');

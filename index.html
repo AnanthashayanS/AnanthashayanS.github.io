@@ -109,13 +109,15 @@
                 <div class="logo">
                     <h1 class="glitch" data-text="A.S">A.S</h1>
                 </div>
+                <button class="mobile-nav-toggle" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <nav>
                     <ul class="nav-links">
                         <li><a href="#about" class="hover-target">About</a></li>
                         <li><a href="#skills" class="hover-target">Skills</a></li>
                         <li><a href="#experience" class="hover-target">Experience</a></li>
                         <li><a href="#microcontrollers" class="hover-target">MCUs</a></li>
-                        <li><a href="#peripherals" class="hover-target">Peripherals</a></li>
                         <li><a href="#contact" class="hover-target">Contact</a></li>
                     </ul>
                 </nav>
@@ -478,168 +480,6 @@
             </div>
         </section>
 
-        <section id="peripherals" class="peripherals-section">
-            <div class="container">
-                <h2 class="section-title reveal">Peripheral Integration</h2>
-                <div class="peripheral-container reveal">
-                    <div class="peripheral-description">
-                        <p>Extensive experience with integrating and configuring peripherals across different microcontroller families:</p>
-                        <ul>
-                            <li>Communication interfaces (SPI, I2C, UART, I2S, USB)</li>
-                            <li>Wireless protocols (BLE, Thread, Zigbee, Wi-Fi)</li>
-                            <li>Sensor integration (MEMS, environmental, biometric)</li>
-                            <li>Memory interfaces (QSPI Flash, SDMMC, external RAM)</li>
-                            <li>Display drivers (LCD, OLED, E-paper)</li>
-                            <li>Power management peripherals</li>
-                        </ul>
-                        <p>Each peripheral is configured with optimized parameters for the specific application requirements, balancing performance, power consumption, and reliability.</p>
-                    </div>
-                    <div class="peripheral-showcase">
-                        <div class="peripheral-code-block">
-                            <div class="terminal-header">Generic Peripheral Driver Interface</div>
-                            <pre class="code-snippet"><code>// Generic Peripheral Driver Structure
-typedef struct {
-    void (*init)(void);
-    void (*deinit)(void);
-    bool (*isReady)(void);
-    int (*transfer)(uint8_t *txData, uint8_t *rxData, uint16_t length);
-    int (*read)(uint8_t *data, uint16_t length);
-    int (*write)(uint8_t *data, uint16_t length);
-} peripheral_driver_t;
-
-// Platform-agnostic initialization routine
-void peripheral_init(void) {
-    // Initialize system peripherals
-    uart_init();
-    spi_init();
-    i2c_init();
-    adc_init();
-    
-    // Configure interrupts with appropriate priorities
-    NVIC_SetPriority(UART_IRQn, 1);
-    NVIC_EnableIRQ(UART_IRQn);
-    
-    NVIC_SetPriority(SPI_IRQn, 2);
-    NVIC_EnableIRQ(SPI_IRQn);
-    
-    NVIC_SetPriority(I2C_IRQn, 2);
-    NVIC_EnableIRQ(I2C_IRQn);
-}</code></pre>
-                            <div class="peripheral-tabs">
-                                <button class="tab-button active" data-tab="spi-tab">SPI</button>
-                                <button class="tab-button" data-tab="i2c-tab">I2C</button>
-                                <button class="tab-button" data-tab="uart-tab">UART</button>
-                                <button class="tab-button" data-tab="ble-tab">BLE</button>
-                            </div>
-                            <div class="peripheral-tabs-content">
-                                <div id="spi-tab" class="tab-content active">
-                                    <pre class="code-snippet"><code>// SPI Interface for sensor communication
-// SPI Configuration structure
-typedef struct {
-    uint32_t Mode;          // SPI mode (0-3)
-    uint32_t ClockFreq;     // Clock frequency
-    uint32_t DataSize;      // Data size (8/16 bits)
-    uint32_t FirstBit;      // MSB or LSB first
-    uint8_t CSPin;          // Chip select pin
-} spi_config_t;
-
-int spi_init(spi_config_t *config) {
-    // Enable SPI clock
-    SPI_CLOCK_ENABLE();
-    GPIO_CLOCK_ENABLE();
-    
-    // Configure GPIO pins for SPI
-    GPIO_InitStruct.Pin = SPI_SCK_PIN | SPI_MISO_PIN | SPI_MOSI_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = SPI_GPIO_AF;
-    HAL_GPIO_Init(SPI_GPIO_PORT, &GPIO_InitStruct);</code></pre>
-                                </div>
-                                <div id="i2c-tab" class="tab-content">
-                                    <pre class="code-snippet"><code>// I2C Interface for sensor and device communication
-// I2C Configuration structure
-typedef struct {
-    uint32_t ClockSpeed;    // I2C clock speed
-    uint8_t OwnAddress;     // Own address (for slave mode)
-    uint8_t DutyCycle;      // I2C duty cycle
-} i2c_config_t;
-
-int i2c_init(i2c_config_t *config) {
-    // Enable I2C clock
-    I2C_CLOCK_ENABLE();
-    GPIO_CLOCK_ENABLE();
-    
-    // Configure GPIO pins for I2C
-    GPIO_InitStruct.Pin = I2C_SCL_PIN | I2C_SDA_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = I2C_GPIO_AF;
-    HAL_GPIO_Init(I2C_GPIO_PORT, &GPIO_InitStruct);</code></pre>
-                                </div>
-                                <div id="uart-tab" class="tab-content">
-                                    <pre class="code-snippet"><code>// UART Communication for serial interface
-// UART Configuration structure
-typedef struct {
-    uint32_t BaudRate;      // Baudrate
-    uint32_t WordLength;    // Data bits (8 or 9)
-    uint32_t StopBits;      // Stop bits (1 or 2)
-    uint32_t Parity;        // Parity (none, even, odd)
-    uint32_t Mode;          // Tx, Rx, or both
-    uint32_t HwFlowCtl;     // Hardware flow control
-} uart_config_t;
-
-int uart_init(uart_config_t *config) {
-    // Enable UART clock
-    UART_CLOCK_ENABLE();
-    GPIO_CLOCK_ENABLE();
-    
-    // Configure GPIO pins for UART
-    GPIO_InitStruct.Pin = UART_TX_PIN | UART_RX_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = UART_GPIO_AF;
-    HAL_GPIO_Init(UART_GPIO_PORT, &GPIO_InitStruct);</code></pre>
-                                </div>
-                                <div id="ble-tab" class="tab-content">
-                                    <pre class="code-snippet"><code>// BLE setup for NRF5340
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/uuid.h>
-
-// Advertising data
-static const struct bt_data ad[] = {
-    BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL)),
-};
-
-static void bt_ready(int err) {
-    if (err) {
-        printk("Bluetooth init failed (err %d)\n", err);
-        return;
-    }
-    
-    printk("Bluetooth initialized\n");
-    
-    // Start advertising
-    err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
-    if (err) {
-        printk("Advertising failed to start (err %d)\n", err);
-        return;
-    }
-    
-    printk("Advertising successfully started\n");
-}</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="contact" class="contact-section">
             <div class="container">
                 <h2 class="section-title reveal">Contact</h2>
@@ -679,7 +519,6 @@ static void bt_ready(int err) {
                         <li><a href="#skills" class="hover-target">Skills</a></li>
                         <li><a href="#experience" class="hover-target">Experience</a></li>
                         <li><a href="#microcontrollers" class="hover-target">MCUs</a></li>
-                        <li><a href="#peripherals" class="hover-target">Peripherals</a></li>
                     </ul>
                 </div>
             </div>
