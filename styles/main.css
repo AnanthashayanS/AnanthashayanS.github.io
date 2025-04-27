@@ -294,6 +294,12 @@ header {
     width: 100%;
 }
 
+.nav-links a.current {
+    color: var(--primary);
+    background-color: var(--secondary);
+    text-shadow: 0 0 8px var(--primary);
+}
+
 /* Mobile Nav Toggle */
 .mobile-nav-toggle {
     display: none;
@@ -316,70 +322,128 @@ header {
 @media (max-width: 768px) {
     .container {
         width: 100%;
+        max-width: 100%;
         padding: 0 15px;
     }
     
+    /* Remove hamburger button and show all nav links inline */
     .mobile-nav-toggle {
-        display: block;
-        z-index: 1100;
+        display: none;
     }
     
-    nav {
-        position: relative;
+    header {
+        padding: 10px 0;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
     }
     
     .nav-links {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 80%;
-        height: 100vh;
-        background-color: var(--darker);
-        flex-direction: column;
-        align-items: center;
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
         justify-content: center;
-        padding: 60px 0;
-        transition: right 0.3s ease-in-out;
-        z-index: 1050;
-        border-left: 1px solid var(--terminal-green-dim);
-    }
-    
-    .nav-links.active {
-        right: 0;
+        gap: 10px;
+        width: 100%;
+        height: auto;
+        background-color: transparent;
+        border-left: none;
+        padding: 0;
     }
     
     .nav-links li {
-        margin: 15px 0;
-        width: 100%;
-        text-align: center;
+        margin: 5px;
+        width: auto;
     }
     
     .nav-links a {
-        display: block;
-        padding: 10px 20px;
-        font-size: 18px;
+        display: inline-block;
+        padding: 8px 12px;
+        font-size: 14px;
+        background-color: var(--darker);
+        border-radius: 4px;
+        border: 1px solid var(--terminal-border);
     }
     
-    /* Hero section mobile adjustments */
+    .nav-links a:hover {
+        background-color: var(--secondary);
+    }
+    
+    /* Improve hero section for mobile */
     .hero {
-        padding: 100px 0 60px;
+        padding: 120px 0 40px;
+        text-align: center;
     }
     
-    .hero-title {
-        font-size: 2.2rem;
+    .hero-content {
+        margin: 0 auto;
+        padding: 0 10px;
     }
     
-    .hero-subtitle {
-        font-size: 1.2rem;
+    /* Ensure terminal sections are readable */
+    .terminal-section, 
+    .command-output {
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Adjust padding for microcontroller pins on mobile */
+    .pcb-component-pins {
+        margin-top: 15px;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    /* Make contact section more compact */
+    .contact-section .command-output i {
+        display: inline-block;
+        width: 20px;
+    }
+    
+    /* Fix skill-item layout */
+    .skill-item {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .skill-progress {
+        width: 100%;
+    }
+    
+    /* Improved experience section for mobile */
+    .experience-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .experience-content ul {
+        padding-left: 15px;
+    }
+    
+    /* Adjust footer content */
+    .footer-section {
+        text-align: center;
+    }
+    
+    .social-icons {
+        justify-content: center;
+    }
+    
+    .footer-links {
+        text-align: center;
     }
     
     /* Sections adjustments */
     section {
-        padding: 50px 0;
+        padding: 40px 0;
     }
     
     .section-title {
-        font-size: 1.8rem;
+        margin-bottom: 25px;
     }
     
     /* Skills section */
@@ -389,7 +453,7 @@ header {
     }
     
     .skill-item {
-        padding: 15px;
+        margin-bottom: 15px;
     }
     
     .skill-title {
@@ -417,6 +481,7 @@ header {
     /* Microcontrollers section */
     .microcontrollers-container {
         grid-template-columns: 1fr;
+        padding: 0 5px;
     }
     
     .pcb-traces {
@@ -424,13 +489,15 @@ header {
     }
     
     .pcb-component {
-        margin: 10px 0;
-        padding: 15px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 0 20px 0;
     }
     
     /* Footer */
     .footer-content {
         flex-direction: column;
+        gap: 20px;
     }
     
     .footer-section {
@@ -450,7 +517,7 @@ header {
     }
 
     .logo h1 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
     
     .hero-title {
@@ -471,7 +538,7 @@ header {
     
     .terminal-header {
         font-size: 0.85rem;
-        padding: 8px 12px;
+        padding: 8px 10px;
     }
     
     .command-output {
@@ -508,6 +575,31 @@ header {
     
     .cli-output {
         font-size: 0.8rem;
+    }
+    
+    .nav-links {
+        gap: 6px;
+    }
+    
+    .nav-links a {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    /* Adjust container padding */
+    .container {
+        padding: 0 10px;
+    }
+    
+    /* Remove any horizontal scrolling possibility */
+    body, html {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    /* Fix microcontroller section spacing */
+    .microcontrollers-container {
+        padding: 0 5px;
     }
 }
 
@@ -557,7 +649,28 @@ header {
     }
     
     .component-specs p {
-        font-size: 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+    }
+    
+    .nav-links {
+        gap: 4px;
+    }
+    
+    .nav-links a {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+    
+    /* Ensure extremely small screens still look good */
+    .container {
+        padding: 0 8px;
+    }
+    
+    /* Make text more compact */
+    body {
+        font-size: 14px;
     }
 }
 
