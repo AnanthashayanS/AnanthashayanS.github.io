@@ -868,6 +868,7 @@ section {
     white-space: pre-wrap;
     word-break: break-word;
     color: var(--terminal-text);
+    text-align: left;
 }
 
 .command-text {
