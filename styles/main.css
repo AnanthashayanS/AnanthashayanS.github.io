@@ -314,23 +314,34 @@ header {
 
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 0 15px;
+    }
+    
     .mobile-nav-toggle {
         display: block;
+        z-index: 1100;
+    }
+    
+    nav {
+        position: relative;
     }
     
     .nav-links {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 250px;
+        width: 80%;
         height: 100vh;
-        background-color: rgba(0, 0, 0, 0.9);
+        background-color: var(--darker);
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-        padding: 80px 0;
-        transition: right 0.3s ease;
-        z-index: 1000;
+        justify-content: center;
+        padding: 60px 0;
+        transition: right 0.3s ease-in-out;
+        z-index: 1050;
+        border-left: 1px solid var(--terminal-green-dim);
     }
     
     .nav-links.active {
@@ -339,10 +350,214 @@ header {
     
     .nav-links li {
         margin: 15px 0;
+        width: 100%;
+        text-align: center;
     }
     
     .nav-links a {
+        display: block;
+        padding: 10px 20px;
         font-size: 18px;
+    }
+    
+    /* Hero section mobile adjustments */
+    .hero {
+        padding: 100px 0 60px;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    /* Sections adjustments */
+    section {
+        padding: 50px 0;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    /* Skills section */
+    .skills-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .skill-item {
+        padding: 15px;
+    }
+    
+    .skill-title {
+        font-size: 1rem;
+    }
+    
+    .skill-command-output {
+        font-size: 0.85rem;
+    }
+    
+    /* Experience section */
+    .experience-item {
+        padding: 15px;
+    }
+    
+    .experience-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .experience-content ul {
+        padding-left: 20px;
+    }
+    
+    /* Microcontrollers section */
+    .microcontrollers-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .pcb-traces {
+        display: none;
+    }
+    
+    .pcb-component {
+        margin: 10px 0;
+        padding: 15px;
+    }
+    
+    /* Footer */
+    .footer-content {
+        flex-direction: column;
+    }
+    
+    .footer-section {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+}
+
+/* Additional small screen adjustments */
+@media (max-width: 576px) {
+    header {
+        padding: 10px 0;
+    }
+    
+    .header-content {
+        align-items: center;
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .terminal-section {
+        padding: 12px;
+    }
+    
+    .terminal-header {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+    
+    .command-output {
+        font-size: 0.8rem;
+        padding: 12px;
+        white-space: normal;
+    }
+    
+    .command-text {
+        font-size: 0.85rem;
+    }
+    
+    /* Terminal modal adjustments */
+    .terminal-modal .terminal-content {
+        width: 95%;
+        max-width: 95%;
+        padding: 15px;
+    }
+    
+    /* Command line interface */
+    .cli-container {
+        width: 100%;
+        bottom: 0;
+        height: 60%;
+    }
+    
+    .cli-input {
+        font-size: 0.85rem;
+    }
+    
+    .cli-prompt {
+        font-size: 0.85rem;
+    }
+    
+    .cli-output {
+        font-size: 0.8rem;
+    }
+}
+
+/* Extra small device adjustments */
+@media (max-width: 380px) {
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+    }
+    
+    .skill-title {
+        font-size: 0.9rem;
+    }
+    
+    .experience-header h3,
+    .certification-header h3 {
+        font-size: 1rem;
+    }
+    
+    .experience-meta,
+    .certification-date {
+        font-size: 0.8rem;
+    }
+    
+    .pcb-component {
+        padding: 10px;
+    }
+    
+    .component-name {
+        font-size: 1rem;
+    }
+    
+    .component-details {
+        font-size: 0.8rem;
+    }
+    
+    .component-specs p {
+        font-size: 0.8rem;
     }
 }
 
@@ -531,11 +746,13 @@ section {
 }
 
 .command-output {
-    padding: 20px;
-    color: var(--text);
-    white-space: pre-line;
-    font-size: 15px;
-    line-height: 1.7;
+    background-color: var(--terminal-bg-alt);
+    padding: 15px;
+    border-radius: 0 0 5px 5px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .command-text {
@@ -601,11 +818,12 @@ section {
 }
 
 .skill-command-output {
-    font-size: 14px;
-    color: var(--text);
-    margin-bottom: 20px;
-    line-height: 1.8;
-    white-space: pre-line;
+    font-size: 0.9rem;
+    color: var(--terminal-text);
+    padding: 10px 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    position: relative;
 }
 
 .skill-progress {
@@ -1178,148 +1396,6 @@ footer {
     position: relative;
 }
 
-/* Enhanced Mobile Responsiveness */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 15px;
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.2rem;
-    }
-    
-    .section-title {
-        font-size: 1.8rem;
-    }
-    
-    .nav-links {
-        gap: 10px;
-    }
-    
-    .nav-links a {
-        font-size: 14px;
-        padding: 5px;
-    }
-    
-    .microcontrollers-container {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .skill-item {
-        padding: 12px;
-    }
-    
-    .skill-title {
-        font-size: 15px;
-    }
-    
-    .skill-command-output {
-        font-size: 12px;
-    }
-    
-    .experience-item {
-        padding: 15px;
-    }
-    
-    .education-certifications {
-        grid-template-columns: 1fr;
-    }
-    
-    .pcb-component {
-        padding: 12px;
-    }
-    
-    .component-specs p {
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 576px) {
-    header {
-        padding: 10px 0;
-    }
-    
-    .header-content {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-    
-    .section-title {
-        font-size: 1.5rem;
-    }
-    
-    .skills-container {
-        gap: 15px;
-    }
-    
-    .terminal-section {
-        padding: 12px;
-    }
-    
-    .terminal-header {
-        font-size: 14px;
-    }
-    
-    .command-output {
-        font-size: 12px;
-    }
-    
-    .command-text {
-        font-size: 12px;
-    }
-    
-    .pcb-component {
-        margin: 0 auto;
-        max-width: 280px;
-    }
-    
-    .component-name {
-        font-size: 15px;
-    }
-    
-    .component-details {
-        font-size: 12px;
-    }
-    
-    .terminal-modal .terminal-content {
-        max-width: 90%;
-        max-height: 90vh;
-        font-size: 12px;
-    }
-    
-    .tab-button {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-    
-    .code-snippet {
-        font-size: 11px;
-    }
-}
-
 /* Experience section */
 .experience-section {
     background-color: rgba(8, 8, 8, 0.8);
@@ -1490,4 +1566,15 @@ footer {
 .certification-content p {
     font-size: 14px;
     line-height: 1.6;
+}
+
+/* Prevent body scrolling when nav is open */
+body.nav-open {
+    overflow: hidden;
+}
+
+/* Style for active mobile toggle button */
+.mobile-nav-toggle.active {
+    background-color: var(--terminal-green-dim);
+    border-color: var(--terminal-green);
 } 

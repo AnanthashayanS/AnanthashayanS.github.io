@@ -1191,35 +1191,108 @@ function initRevealAnimations() {
  * Initialize mobile navigation toggle
  */
 function initMobileNav() {
-    const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+    const navToggle = document.querySelector('.mobile-nav-toggle');
     const navLinks = document.querySelector('.nav-links');
+    const navItems = document.querySelectorAll('.nav-links a');
     
-    if (!mobileNavToggle || !navLinks) return;
+    if (!navToggle || !navLinks) {
+        console.warn('Mobile navigation elements not found');
+        return;
+    }
     
-    mobileNavToggle.addEventListener('click', () => {
+    // Toggle navigation menu
+    navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
         navLinks.classList.toggle('active');
         
-        // Change icon based on menu state
-        const icon = mobileNavToggle.querySelector('i');
-        if (navLinks.classList.contains('active')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
-        } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
+        // Toggle icon between bars and X
+        const icon = navToggle.querySelector('i');
+        if (icon) {
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+        
+        // Play toggle sound
+        playSound('click');
+        
+        // Prevent scrolling when nav is open
+        document.body.classList.toggle('nav-open');
+    });
+    
+    // Close menu when clicking on links
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            navToggle.classList.remove('active');
+            
+            // Reset icon
+            const icon = navToggle.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+            
+            // Allow scrolling
+            document.body.classList.remove('nav-open');
+        });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (navLinks.classList.contains('active') && 
+            !navLinks.contains(e.target) && 
+            !navToggle.contains(e.target)) {
+            
+            navLinks.classList.remove('active');
+            navToggle.classList.remove('active');
+            
+            // Reset icon
+            const icon = navToggle.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+            
+            // Allow scrolling
+            document.body.classList.remove('nav-open');
         }
     });
     
-    // Close mobile menu when clicking on a link
-    const links = navLinks.querySelectorAll('a');
-    links.forEach(link => {
-        link.addEventListener('click', () => {
+    // Add touch event support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, false);
+    
+    function handleSwipe() {
+        if (navLinks.classList.contains('active') && touchEndX - touchStartX > 100) {
+            // Swipe right - close menu
             navLinks.classList.remove('active');
-            const icon = mobileNavToggle.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        });
-    });
+            navToggle.classList.remove('active');
+            
+            // Reset icon
+            const icon = navToggle.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+            
+            // Allow scrolling
+            document.body.classList.remove('nav-open');
+        }
+    }
 }
 
 // Initialize everything when DOM is loaded
