@@ -104,8 +104,8 @@ p {
 /* Custom cursor (Test Probe) */
 .custom-cursor {
     position: fixed;
-    width: 12px;
-    height: 12px;
+    width: 4px;
+    height: 4px;
     transform: translate(-50%, -50%);
     pointer-events: none;
     z-index: 9999;
@@ -116,9 +116,9 @@ p {
     content: '';
     position: absolute;
     width: 2px;
-    height: 10px;
+    height: 25px;
     background-color: var(--terminal-green);
-    top: -7px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     border-radius: 1px;
@@ -127,25 +127,25 @@ p {
 .custom-cursor::after {
     content: '';
     position: absolute;
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 18px;
     border: 2px solid var(--terminal-green);
-    border-radius: 50%;
-    top: 50%;
+    border-radius: 4px;
+    bottom: 20px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     box-shadow: 0 0 4px var(--terminal-green);
 }
 
 .custom-cursor.hover {
-    width: 20px;
-    height: 20px;
+    width: 8px;
+    height: 8px;
 }
 
 .custom-cursor.hover::after {
     background-color: rgba(0, 255, 140, 0.15);
-    width: 15px;
-    height: 15px;
+    width: 10px;
+    height: 20px;
     box-shadow: 0 0 8px var(--terminal-green);
 }
 
@@ -1318,4 +1318,176 @@ footer {
     .code-snippet {
         font-size: 11px;
     }
+}
+
+/* Experience section */
+.experience-section {
+    background-color: rgba(8, 8, 8, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.experience-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    position: relative;
+}
+
+.experience-item {
+    background-color: var(--darker);
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.experience-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border-color: var(--primary);
+}
+
+.experience-header {
+    margin-bottom: 15px;
+}
+
+.experience-header h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: var(--primary);
+}
+
+.experience-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--subtext);
+}
+
+.experience-content ul {
+    margin-left: 20px;
+    list-style-type: square;
+}
+
+.experience-content li {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Education section */
+.education-section {
+    background-color: rgba(12, 12, 12, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.education-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.education-item {
+    background-color: var(--darker);
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.education-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border-color: var(--primary);
+}
+
+.education-header {
+    margin-bottom: 15px;
+}
+
+.education-header h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: var(--primary);
+}
+
+.education-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--subtext);
+}
+
+.education-content p {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.education-content ul {
+    margin-left: 20px;
+    list-style-type: square;
+}
+
+.education-content li {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Certifications section */
+.certifications-section {
+    background-color: rgba(8, 8, 8, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.certifications-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.certification-item {
+    background-color: var(--darker);
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.certification-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border-color: var(--primary);
+}
+
+.certification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.certification-header h3 {
+    font-size: 18px;
+    margin-bottom: 0;
+    color: var(--primary);
+}
+
+.certification-date, .certification-status {
+    font-size: 14px;
+    color: var(--subtext);
+    background-color: var(--secondary);
+    padding: 4px 10px;
+    border-radius: 3px;
+}
+
+.certification-status {
+    color: var(--terminal-yellow);
+}
+
+.certification-content p {
+    font-size: 14px;
+    line-height: 1.6;
 } 
