@@ -101,36 +101,52 @@ p {
     margin-bottom: 1rem;
 }
 
-/* Custom cursor */
+/* Custom cursor (Test Probe) */
 .custom-cursor {
     position: fixed;
-    width: 15px;
-    height: 15px;
-    border: 1px solid var(--terminal-green);
-    border-radius: 50%;
+    width: 12px;
+    height: 12px;
     transform: translate(-50%, -50%);
     pointer-events: none;
     z-index: 9999;
-    transition: width 0.2s, height 0.2s, background-color 0.2s;
+    transition: all 0.15s ease;
+}
+
+.custom-cursor::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 10px;
+    background-color: var(--terminal-green);
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 1px;
 }
 
 .custom-cursor::after {
     content: '';
     position: absolute;
-    width: 3px;
-    height: 3px;
-    background-color: var(--terminal-green);
+    width: 7px;
+    height: 7px;
+    border: 2px solid var(--terminal-green);
     border-radius: 50%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    box-shadow: 0 0 4px var(--terminal-green);
 }
 
 .custom-cursor.hover {
-    width: 25px;
-    height: 25px;
-    background-color: rgba(0, 255, 140, 0.1);
-    mix-blend-mode: screen;
+    width: 20px;
+    height: 20px;
+}
+
+.custom-cursor.hover::after {
+    background-color: rgba(0, 255, 140, 0.15);
+    width: 15px;
+    height: 15px;
+    box-shadow: 0 0 8px var(--terminal-green);
 }
 
 /* Matrix canvas */
@@ -281,12 +297,19 @@ header {
 /* Mobile Nav Toggle */
 .mobile-nav-toggle {
     display: none;
-    background: none;
+    background: transparent;
     border: none;
     color: var(--primary);
     font-size: 24px;
     cursor: pointer;
     z-index: 1001;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.mobile-nav-toggle:hover {
+    transform: scale(1.1);
+    opacity: 1;
 }
 
 /* Mobile Responsive Styles */
